@@ -4,116 +4,183 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Cinema Booking" Height="650" Width="980">
-    <Grid Margin="16">
+        Title="LumiSeat • Cinema Booking" Height="760" Width="1200" WindowStartupLocation="CenterScreen" Background="#0A0F1F">
+    <Window.Resources>
+        <Style TargetType="Border" x:Key="CardStyle">
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="Background" Value="#1A233A" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+
+        <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#6C63FF" Offset="0" />
+            <GradientStop Color="#8A4DFF" Offset="1" />
+        </LinearGradientBrush>
+    </Window.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border Background="#17202A" Padding="12" CornerRadius="8">
-            <DockPanel>
-                <TextBlock Text="Онлайн-бронирование кинотеатра"
-                           Foreground="White"
-                           FontSize="22"
-                           FontWeight="SemiBold"
-                           DockPanel.Dock="Left" />
-                <TextBlock Text="{Binding CurrentUserDisplay}"
-                           Foreground="White"
-                           FontSize="14"
-                           VerticalAlignment="Center"
-                           DockPanel.Dock="Right" />
-            </DockPanel>
+        <Border Style="{StaticResource CardStyle}" Background="{StaticResource AccentGradient}" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="LumiSeat" Foreground="White" FontSize="30" FontWeight="Bold" />
+                    <TextBlock Text="Современное онлайн-бронирование кино" Foreground="#F3F4FF" FontSize="14" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="Пользователь:" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <Border Background="#33FFFFFF" CornerRadius="12" Padding="10,6">
+                        <TextBlock Text="{Binding CurrentUserDisplay}" Foreground="White" />
+                    </Border>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <TabControl Grid.Row="1" Margin="0,12,0,0">
-            <TabItem Header="Авторизация">
-                <Grid Margin="16">
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+            <TabItem Header="Главная">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,14,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <ComboBox Width="500"
+                                          ItemsSource="{Binding Sessions}"
+                                          DisplayMemberPath="DisplayTitle"
+                                          SelectedItem="{Binding SelectedSession}" />
+                                <Button Content="Обновить" Margin="10,0,0,0" Padding="14,7" Click="Refresh_Click" />
+                            </StackPanel>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <DataGrid ItemsSource="{Binding Seats}"
+                                          SelectedItem="{Binding SelectedSeat}"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          Grid.Column="0"
+                                          Margin="0,0,12,0">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Ряд" Binding="{Binding Row}" Width="*" />
+                                        <DataGridTextColumn Header="Место" Binding="{Binding Number}" Width="*" />
+                                        <DataGridCheckBoxColumn Header="Занято" Binding="{Binding IsBooked}" Width="*" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <StackPanel Grid.Column="1">
+                                    <Border Background="#11192B" CornerRadius="16" Padding="12" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding SelectedMovieTitle}" FontSize="21" FontWeight="SemiBold" Foreground="White" />
+                                            <TextBlock Text="{Binding SelectedMoviePrice}" Foreground="#A5B4FC" Margin="0,4,0,8" FontSize="16" />
+                                            <TextBlock Text="{Binding SelectedMovieOverview}" TextWrapping="Wrap" Foreground="#CBD5E1" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Button Content="Забронировать выбранное место" Padding="14,10" Click="BookSeat_Click" />
+                                    <TextBlock Text="{Binding BookingMessage}" Margin="0,10,0,0" Foreground="#D1FAE5" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Постер" Foreground="White" FontSize="15" Margin="0,0,0,8" />
+                                <Border Background="#0F172A" CornerRadius="16" Padding="6">
+                                    <Image Source="{Binding SelectedMoviePoster}" Height="360" Stretch="UniformToFill" />
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Аккаунт">
+                <Grid Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Вход" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8" />
-                        <TextBlock Text="Email" />
-                        <TextBox Text="{Binding LoginEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
-                        <TextBlock Text="Пароль" />
-                        <PasswordBox x:Name="LoginPasswordBox" Margin="0,0,0,8" />
-                        <Button Content="Войти" Padding="10,6" Width="120" Click="Login_Click" />
-                        <TextBlock Text="{Binding AuthMessage}" Foreground="DarkRed" Margin="0,8,0,0" TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                        <TextBlock Text="Регистрация" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8" />
-                        <TextBlock Text="Имя" />
-                        <TextBox Text="{Binding RegisterName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
-                        <TextBlock Text="Email" />
-                        <TextBox Text="{Binding RegisterEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
-                        <TextBlock Text="Пароль" />
-                        <PasswordBox x:Name="RegisterPasswordBox" Margin="0,0,0,8" />
-                        <Button Content="Создать аккаунт" Padding="10,6" Width="140" Click="Register_Click" />
-                        <TextBlock Text="{Binding RegisterMessage}" Foreground="DarkGreen" Margin="0,8,0,0" TextWrapping="Wrap" />
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Сеансы и места">
-                <Grid Margin="16">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <TextBlock Text="Сеанс:" VerticalAlignment="Center" Margin="0,0,8,0" />
-                        <ComboBox Width="420"
-                                  ItemsSource="{Binding Sessions}"
-                                  DisplayMemberPath="DisplayTitle"
-                                  SelectedItem="{Binding SelectedSession}" />
-                        <Button Content="Обновить" Margin="8,0,0,0" Padding="10,6" Click="Refresh_Click" />
-                    </StackPanel>
-
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <DataGrid ItemsSource="{Binding Seats}"
-                                  SelectedItem="{Binding SelectedSeat}"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="True"
-                                  Margin="0,0,12,0">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Ряд" Binding="{Binding Row}" Width="*" />
-                                <DataGridTextColumn Header="Место" Binding="{Binding Number}" Width="*" />
-                                <DataGridCheckBoxColumn Header="Занято" Binding="{Binding IsBooked}" Width="*" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="Действия" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8" />
-                            <TextBlock Text="Выберите свободное место в таблице и нажмите кнопку ниже." TextWrapping="Wrap" />
-                            <Button Content="Забронировать место" Padding="10,8" Margin="0,12,0,0" Click="BookSeat_Click" />
-                            <TextBlock Text="{Binding BookingMessage}" Margin="0,12,0,0" TextWrapping="Wrap" />
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="Вход" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,14" />
+                            <TextBlock Text="Email" Foreground="#CBD5E1" />
+                            <TextBox Text="{Binding LoginEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
+                            <TextBlock Text="Пароль" Foreground="#CBD5E1" />
+                            <PasswordBox x:Name="LoginPasswordBox" Margin="0,4,0,14" />
+                            <Button Content="Войти" Padding="12,8" Click="Login_Click" />
+                            <TextBlock Text="{Binding AuthMessage}" Foreground="#FCA5A5" Margin="0,10,0,0" />
                         </StackPanel>
-                    </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource CardStyle}" Grid.Column="1" Margin="12,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Регистрация" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,14" />
+                            <TextBlock Text="Имя" Foreground="#CBD5E1" />
+                            <TextBox Text="{Binding RegisterName, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
+                            <TextBlock Text="Email" Foreground="#CBD5E1" />
+                            <TextBox Text="{Binding RegisterEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
+                            <TextBlock Text="Пароль" Foreground="#CBD5E1" />
+                            <PasswordBox x:Name="RegisterPasswordBox" Margin="0,4,0,14" />
+                            <Button Content="Создать аккаунт" Padding="12,8" Click="Register_Click" />
+                            <TextBlock Text="{Binding RegisterMessage}" Foreground="#86EFAC" Margin="0,10,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Мои брони">
-                <Grid Margin="16">
+            <TabItem Header="Мои билеты">
+                <Border Style="{StaticResource CardStyle}" Margin="10">
                     <DataGrid ItemsSource="{Binding MyBookings}" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Фильм" Binding="{Binding Session.MovieTitle}" Width="2*" />
                             <DataGridTextColumn Header="Начало" Binding="{Binding Session.StartsAt}" Width="*" />
                             <DataGridTextColumn Header="Ряд" Binding="{Binding Seat.Row}" Width="*" />
                             <DataGridTextColumn Header="Место" Binding="{Binding Seat.Number}" Width="*" />
+                            <DataGridTextColumn Header="Цена" Binding="{Binding Session.Price}" Width="*" />
                             <DataGridTextColumn Header="Дата брони" Binding="{Binding BookedAt}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
+                </Border>
+            </TabItem>
+
+            <TabItem Header="Настройки">
+                <StackPanel Margin="20" Width="460">
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Внешний вид" Foreground="White" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Переключение темы (светлая/темная)." Foreground="#CBD5E1" Margin="0,8,0,12" />
+                            <Button Content="Сменить тему" Padding="12,8" Click="ToggleTheme_Click" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="База данных" Foreground="White" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Файл SQLite: cinema.db (рядом с .exe)" Foreground="#CBD5E1" Margin="0,8,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </TabItem>
         </TabControl>
     </Grid>

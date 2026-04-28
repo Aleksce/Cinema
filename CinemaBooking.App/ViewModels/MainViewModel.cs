@@ -18,6 +18,7 @@ public class MainViewModel : ObservableObject
     private string _authMessage = string.Empty;
     private string _registerMessage = string.Empty;
     private string _bookingMessage = string.Empty;
+    private bool _isDarkTheme = true;
 
     public ObservableCollection<MovieSession> Sessions { get; } = [];
     public ObservableCollection<Seat> Seats { get; } = [];
@@ -59,9 +60,20 @@ public class MainViewModel : ObservableObject
         set => SetProperty(ref _bookingMessage, value);
     }
 
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set => SetProperty(ref _isDarkTheme, value);
+    }
+
     public string CurrentUserDisplay => _currentUser is null
-        ? "Не авторизован"
-        : $"Пользователь: {_currentUser.Name}";
+        ? "Гость"
+        : $"{_currentUser.Name}";
+
+    public string SelectedMovieTitle => SelectedSession?.MovieTitle ?? "Выберите фильм";
+    public string SelectedMovieOverview => SelectedSession?.Overview ?? "Описание появится после выбора фильма.";
+    public string SelectedMoviePrice => SelectedSession is null ? "—" : $"{SelectedSession.Price:0} ₽";
+    public string SelectedMoviePoster => SelectedSession?.PosterUrl ?? string.Empty;
 
     public MovieSession? SelectedSession
     {
@@ -71,6 +83,10 @@ public class MainViewModel : ObservableObject
             if (SetProperty(ref _selectedSession, value))
             {
                 LoadSeats();
+                OnPropertyChanged(nameof(SelectedMovieTitle));
+                OnPropertyChanged(nameof(SelectedMovieOverview));
+                OnPropertyChanged(nameof(SelectedMoviePrice));
+                OnPropertyChanged(nameof(SelectedMoviePoster));
             }
         }
     }
@@ -97,7 +113,6 @@ public class MainViewModel : ObservableObject
 
         _currentUser = user;
         AuthMessage = "Вход выполнен.";
-        BookingMessage = string.Empty;
         LoadMyBookings();
         OnPropertyChanged(nameof(CurrentUserDisplay));
     }
