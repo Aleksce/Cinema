@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>CinemaBooking.App</AssemblyName>
+    <RootNamespace>CinemaBooking.App</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

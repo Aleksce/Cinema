@@ -46,11 +46,26 @@
 - `Integrations` — клиент TMDB.
 - `Services` — логика авторизации и бронирования.
 - `ViewModels` — состояние и команды UI.
-- `MainWindow.xaml` — современный интерфейс (вкладки: Главная / Аккаунт / Мои билеты / Настройки).
+- `MainWindow.xaml` — интерфейс (вкладки: Главная / Аккаунт / Мои билеты / Настройки).
 
 ## Запуск
 
-1. Windows + Visual Studio 2022.
-2. Восстановить NuGet.
-3. Заполнить `appsettings.json` ключами TMDB.
-4. Запустить проект `CinemaBooking.App`.
+1. Откройте `CinemaBooking.sln` в Visual Studio 2022.
+2. Убедитесь, что установлен workload **.NET desktop development**.
+3. Выберите `CinemaBooking.App` как Startup Project.
+4. Восстановите NuGet (`Restore`).
+5. Запустите Build (`Ctrl+Shift+B`) и затем старт (`F5`).
+
+## Исправление ошибки “исполняемый файл для отладки … не существует”
+
+Если видите ошибку вроде:
+`...\bin\Debug\net8.0-windows\CinemaBooking.App.exe ... не существует`,
+выполните:
+
+1. Закройте проект и откройте **именно `CinemaBooking.sln`**.
+2. ПКМ по `CinemaBooking.App` → **Set as Startup Project**.
+3. Удалите папки `bin` и `obj` внутри `CinemaBooking.App`.
+4. `Build` → `Rebuild Solution`.
+5. Если не помогло: `Debug` → `Open debug launch profiles UI` и выберите профиль **CinemaBooking.App** (command: Project).
+
+После успешной сборки файл `CinemaBooking.App.exe` появится автоматически.
