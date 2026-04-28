@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using System.Windows.Media.Animation;
 using CinemaBooking.App.Models;
 using CinemaBooking.App.ViewModels;
 
@@ -14,16 +14,32 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = _vm;
+        Loaded += (_, _) =>
+        {
+            ((Storyboard)FindResource("FadeInStoryboard")).Begin(RootLayout);
+            ((Storyboard)FindResource("FadeInStoryboard")).Begin(LoginOverlayCard);
+        };
     }
 
     private void Login_Click(object sender, RoutedEventArgs e)
     {
-        _vm.Login(LoginPasswordBox.Password);
+        _vm.Login(OverlayLoginPasswordBox.Password);
+        UpdateLoginOverlay();
     }
 
     private void Register_Click(object sender, RoutedEventArgs e)
     {
-        _vm.Register(RegisterPasswordBox.Password);
+        _vm.Register(OverlayRegisterPasswordBox.Password);
+    }
+
+    private void OverlayLogin_Click(object sender, RoutedEventArgs e)
+    {
+        Login_Click(sender, e);
+    }
+
+    private void OverlayRegister_Click(object sender, RoutedEventArgs e)
+    {
+        Register_Click(sender, e);
     }
 
     private async void SyncTmdb_Click(object sender, RoutedEventArgs e)
@@ -45,11 +61,27 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ToggleTheme_Click(object sender, RoutedEventArgs e)
+    private void OpenMovie_Click(object sender, RoutedEventArgs e)
     {
-        _vm.IsDarkTheme = !_vm.IsDarkTheme;
-        Background = _vm.IsDarkTheme
-            ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0A0F1F"))
-            : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E6EEF8"));
+        if (sender is Button { Tag: MovieSession session })
+        {
+            _vm.OpenMovieModal(session);
+            MovieOverlay.Visibility = Visibility.Visible;
+            ((Storyboard)FindResource("FadeInStoryboard")).Begin(MovieOverlayCard);
+        }
+    }
+
+    private void CloseMovie_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.CloseMovieModal();
+        MovieOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private void UpdateLoginOverlay()
+    {
+        if (_vm.IsAuthenticated)
+        {
+            LoginOverlay.Visibility = Visibility.Collapsed;
+        }
     }
 }

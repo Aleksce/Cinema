@@ -20,6 +20,7 @@ public class MainViewModel : ObservableObject
     private string _bookingMessage = string.Empty;
     private string _syncMessage = string.Empty;
     private bool _isDarkTheme = true;
+    private bool _isMovieModalOpen;
 
     public ObservableCollection<MovieSession> Sessions { get; } = [];
     public ObservableCollection<Seat> Seats { get; } = [];
@@ -73,10 +74,15 @@ public class MainViewModel : ObservableObject
         set => SetProperty(ref _isDarkTheme, value);
     }
 
-    public string CurrentUserDisplay => _currentUser is null
-        ? "Гость"
-        : _currentUser.Name;
+    public bool IsMovieModalOpen
+    {
+        get => _isMovieModalOpen;
+        set => SetProperty(ref _isMovieModalOpen, value);
+    }
 
+    public bool IsAuthenticated => _currentUser is not null;
+
+    public string CurrentUserDisplay => _currentUser is null ? "Гость" : _currentUser.Name;
     public string SelectedMovieTitle => SelectedSession?.MovieTitle ?? "Выберите фильм";
     public string SelectedMovieOverview => SelectedSession?.Overview ?? "Описание появится после выбора фильма.";
     public string SelectedMoviePrice => SelectedSession is null ? "—" : $"{SelectedSession.Price:0} ₽";
@@ -122,6 +128,7 @@ public class MainViewModel : ObservableObject
         AuthMessage = "Вход выполнен.";
         LoadMyBookings();
         OnPropertyChanged(nameof(CurrentUserDisplay));
+        OnPropertyChanged(nameof(IsAuthenticated));
     }
 
     public void Register(string password)
@@ -148,6 +155,17 @@ public class MainViewModel : ObservableObject
         var result = await _bookingService.SyncSessionsFromTmdbAsync();
         SyncMessage = result.Message;
         RefreshSessionsAndSeats();
+    }
+
+    public void OpenMovieModal(MovieSession session)
+    {
+        SelectedSession = session;
+        IsMovieModalOpen = true;
+    }
+
+    public void CloseMovieModal()
+    {
+        IsMovieModalOpen = false;
     }
 
     public void BookSelectedSeat()

@@ -4,8 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="LumiSeat" Height="780" Width="1300" WindowStartupLocation="CenterScreen" Background="#0B1020">
+        Title="LumiSeat" Height="820" Width="1320" WindowStartupLocation="CenterScreen" Background="#0B1020">
     <Window.Resources>
+        <Storyboard x:Key="FadeInStoryboard">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.35" />
+        </Storyboard>
+
         <Style x:Key="NavButton" TargetType="Button">
             <Setter Property="Background" Value="#EF233C" />
             <Setter Property="Foreground" Value="White" />
@@ -15,17 +19,13 @@
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Setter.Value>
+                <Setter.Value><ScaleTransform ScaleX="1" ScaleY="1" /></Setter.Value>
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#FF4057" />
                     <Setter Property="RenderTransform">
-                        <Setter.Value>
-                            <ScaleTransform ScaleX="1.05" ScaleY="1.05" />
-                        </Setter.Value>
+                        <Setter.Value><ScaleTransform ScaleX="1.06" ScaleY="1.06" /></Setter.Value>
                     </Setter>
                 </Trigger>
             </Style.Triggers>
@@ -35,11 +35,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Margin" Value="0,0,0,10" />
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Setter.Value>
-            </Setter>
+            <Setter Property="RenderTransform"><Setter.Value><ScaleTransform ScaleX="1" ScaleY="1" /></Setter.Value></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
@@ -48,11 +44,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="RenderTransform">
-                                    <Setter.Value>
-                                        <ScaleTransform ScaleX="1.02" ScaleY="1.02" />
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter Property="RenderTransform"><Setter.Value><ScaleTransform ScaleX="1.02" ScaleY="1.02" /></Setter.Value></Setter>
                                 <Setter TargetName="Card" Property="BorderBrush" Value="#EF233C" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
@@ -66,18 +58,12 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="18">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid Margin="18" x:Name="RootLayout" Opacity="0">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
 
         <Border Background="#11182D" CornerRadius="18" Padding="14" Margin="0,0,0,12">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                 <TextBlock Text="LumiSeat • Кинотеатр" Foreground="White" FontSize="26" FontWeight="Bold" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Content="Синхр. TMDB" Style="{StaticResource NavButton}" Margin="0,0,10,0" Click="SyncTmdb_Click" />
@@ -87,11 +73,7 @@
         </Border>
 
         <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="320" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="320" />
-            </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="330" /><ColumnDefinition Width="*" /><ColumnDefinition Width="330" /></Grid.ColumnDefinitions>
 
             <Border Background="#121A30" CornerRadius="16" Padding="10" Margin="0,0,12,0">
                 <StackPanel>
@@ -100,18 +82,14 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border CornerRadius="10" ClipToBounds="True">
-                                        <Image Source="{Binding PosterUrl}" Height="110" Stretch="UniformToFill" />
-                                    </Border>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="80" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <Border CornerRadius="10" ClipToBounds="True"><Image Source="{Binding PosterUrl}" Height="110" Stretch="UniformToFill" /></Border>
                                     <StackPanel Grid.Column="1" Margin="10,0,0,0">
                                         <TextBlock Text="{Binding MovieTitle}" Foreground="White" FontWeight="SemiBold" TextWrapping="Wrap" />
                                         <TextBlock Text="{Binding HallName}" Foreground="#A5B4FC" Margin="0,4,0,0" />
                                         <TextBlock Text="{Binding StartsAt}" Foreground="#CBD5E1" />
                                         <TextBlock Text="{Binding Price, StringFormat={}{0:0} ₽}" Foreground="#FCA5A5" FontWeight="Bold" />
+                                        <Button Content="Подробнее" Style="{StaticResource NavButton}" Margin="0,6,0,0" Click="OpenMovie_Click" Tag="{Binding}" />
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
@@ -123,29 +101,16 @@
 
             <Border Grid.Column="1" Background="#101827" CornerRadius="16" Padding="14" Margin="0,0,12,0">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
+                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
                     <StackPanel>
                         <TextBlock Text="{Binding SelectedMovieTitle}" Foreground="White" FontSize="26" FontWeight="Bold" />
                         <TextBlock Text="{Binding SelectedMoviePrice}" Foreground="#FCA5A5" FontSize="18" FontWeight="SemiBold" Margin="0,4,0,8" />
                         <TextBlock Text="{Binding SelectedMovieOverview}" Foreground="#CBD5E1" TextWrapping="Wrap" MaxHeight="90" />
                     </StackPanel>
-
-                    <Border Grid.Row="1" Background="#1A2238" CornerRadius="12" Margin="0,12,0,12" Padding="8">
-                        <TextBlock Text="ЭКРАН" Foreground="#EF233C" HorizontalAlignment="Center" FontWeight="Bold" />
-                    </Border>
-
+                    <Border Grid.Row="1" Background="#1A2238" CornerRadius="12" Margin="0,12,0,12" Padding="8"><TextBlock Text="ЭКРАН" Foreground="#EF233C" HorizontalAlignment="Center" FontWeight="Bold" /></Border>
                     <StackPanel Grid.Row="2">
                         <ItemsControl ItemsSource="{Binding Seats}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <UniformGrid Columns="10" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="10" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding Number}" Margin="2" Padding="6" Click="Seat_Click" Tag="{Binding}">
@@ -153,10 +118,7 @@
                                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                                 <Setter Property="Background" Value="#26365A" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsBooked}" Value="True">
-                                                        <Setter Property="Background" Value="#475569" />
-                                                        <Setter Property="IsEnabled" Value="False" />
-                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsBooked}" Value="True"><Setter Property="Background" Value="#475569" /><Setter Property="IsEnabled" Value="False" /></DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
@@ -170,41 +132,60 @@
                 </Grid>
             </Border>
 
-            <TabControl Grid.Column="2" Background="Transparent" BorderThickness="0">
-                <TabItem Header="Мои билеты">
-                    <Border Background="#121A30" CornerRadius="16" Padding="10" Margin="4">
-                        <DataGrid ItemsSource="{Binding MyBookings}" AutoGenerateColumns="False" IsReadOnly="True">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Фильм" Binding="{Binding Session.MovieTitle}" Width="*" />
-                                <DataGridTextColumn Header="Сеанс" Binding="{Binding Session.StartsAt}" Width="*" />
-                                <DataGridTextColumn Header="Место" Binding="{Binding Seat.Number}" Width="*" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
-                </TabItem>
-                <TabItem Header="Вход">
-                    <Border Background="#121A30" CornerRadius="16" Padding="16" Margin="4">
-                        <StackPanel>
-                            <TextBlock Text="Вход в аккаунт" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,0,0,12" />
-                            <TextBlock Text="Email" Foreground="#CBD5E1" />
-                            <TextBox Text="{Binding LoginEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
-                            <TextBlock Text="Пароль" Foreground="#CBD5E1" />
-                            <PasswordBox x:Name="LoginPasswordBox" Margin="0,4,0,10" />
-                            <Button Content="Войти" Style="{StaticResource NavButton}" Click="Login_Click" />
-                            <TextBlock Text="{Binding AuthMessage}" Foreground="#FCA5A5" Margin="0,8,0,12" />
+            <Border Grid.Column="2" Background="#121A30" CornerRadius="16" Padding="10">
+                <StackPanel>
+                    <TextBlock Text="Мои билеты" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
+                    <DataGrid ItemsSource="{Binding MyBookings}" AutoGenerateColumns="False" IsReadOnly="True" Height="280">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Фильм" Binding="{Binding Session.MovieTitle}" Width="*" />
+                            <DataGridTextColumn Header="Сеанс" Binding="{Binding Session.StartsAt}" Width="*" />
+                            <DataGridTextColumn Header="Место" Binding="{Binding Seat.Number}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </Grid>
 
-                            <Separator Margin="0,8" />
-
-                            <TextBlock Text="Регистрация" Foreground="White" FontSize="18" FontWeight="SemiBold" Margin="0,6,0,10" />
-                            <TextBox Text="{Binding RegisterName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
-                            <TextBox Text="{Binding RegisterEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
-                            <PasswordBox x:Name="RegisterPasswordBox" Margin="0,0,0,10" />
-                            <Button Content="Создать аккаунт" Style="{StaticResource NavButton}" Click="Register_Click" />
-                            <TextBlock Text="{Binding RegisterMessage}" Foreground="#86EFAC" Margin="0,8,0,0" TextWrapping="Wrap" />
+        <Grid x:Name="MovieOverlay" Background="#99000000" Visibility="Collapsed">
+            <Border Width="780" Height="520" Background="#131B31" CornerRadius="22" Padding="18" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0" x:Name="MovieOverlayCard">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="260" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border CornerRadius="14" ClipToBounds="True"><Image Source="{Binding SelectedMoviePoster}" Stretch="UniformToFill" /></Border>
+                    <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                        <TextBlock Text="{Binding SelectedMovieTitle}" Foreground="White" FontSize="28" FontWeight="Bold" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding SelectedMoviePrice}" Foreground="#FCA5A5" FontSize="18" Margin="0,6,0,8" />
+                        <TextBlock Text="{Binding SelectedMovieOverview}" Foreground="#CBD5E1" TextWrapping="Wrap" Height="180" />
+                        <TextBlock Text="Доступные сеансы" Foreground="White" FontWeight="SemiBold" Margin="0,10,0,8" />
+                        <TextBlock Text="{Binding SelectedSession.StartsAt}" Foreground="#A5B4FC" />
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button Content="Выбрать места" Style="{StaticResource NavButton}" Margin="0,0,8,0" Click="CloseMovie_Click" />
+                            <Button Content="Закрыть" Style="{StaticResource NavButton}" Background="#334155" BorderBrush="#334155" Click="CloseMovie_Click" />
                         </StackPanel>
-                    </Border>
-                </TabItem>
-            </TabControl>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="LoginOverlay" Background="#CC050814">
+            <Border Width="520" Height="560" Background="#121A30" CornerRadius="24" Padding="26" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0" x:Name="LoginOverlayCard">
+                <StackPanel>
+                    <TextBlock Text="Добро пожаловать в LumiSeat" Foreground="White" FontSize="30" FontWeight="Bold" TextWrapping="Wrap" />
+                    <TextBlock Text="Войдите или создайте аккаунт" Foreground="#CBD5E1" Margin="0,6,0,20" />
+                    <TextBlock Text="Email" Foreground="#CBD5E1" />
+                    <TextBox Text="{Binding LoginEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
+                    <TextBlock Text="Пароль" Foreground="#CBD5E1" />
+                    <PasswordBox x:Name="OverlayLoginPasswordBox" Margin="0,4,0,12" />
+                    <Button Content="Войти" Style="{StaticResource NavButton}" Click="OverlayLogin_Click" />
+                    <TextBlock Text="{Binding AuthMessage}" Foreground="#FCA5A5" Margin="0,8,0,12" />
+                    <Separator Margin="0,6" />
+                    <TextBlock Text="Регистрация" Foreground="White" FontSize="18" FontWeight="SemiBold" Margin="0,6,0,8" />
+                    <TextBox Text="{Binding RegisterName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                    <TextBox Text="{Binding RegisterEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                    <PasswordBox x:Name="OverlayRegisterPasswordBox" Margin="0,0,0,10" />
+                    <Button Content="Создать аккаунт" Style="{StaticResource NavButton}" Click="OverlayRegister_Click" />
+                    <TextBlock Text="{Binding RegisterMessage}" Foreground="#86EFAC" Margin="0,8,0,0" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </Window>
