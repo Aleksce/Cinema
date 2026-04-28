@@ -18,6 +18,7 @@ public class MainViewModel : ObservableObject
     private string _authMessage = string.Empty;
     private string _registerMessage = string.Empty;
     private string _bookingMessage = string.Empty;
+    private string _syncMessage = string.Empty;
     private bool _isDarkTheme = true;
 
     public ObservableCollection<MovieSession> Sessions { get; } = [];
@@ -60,6 +61,12 @@ public class MainViewModel : ObservableObject
         set => SetProperty(ref _bookingMessage, value);
     }
 
+    public string SyncMessage
+    {
+        get => _syncMessage;
+        set => SetProperty(ref _syncMessage, value);
+    }
+
     public bool IsDarkTheme
     {
         get => _isDarkTheme;
@@ -68,7 +75,7 @@ public class MainViewModel : ObservableObject
 
     public string CurrentUserDisplay => _currentUser is null
         ? "Гость"
-        : $"{_currentUser.Name}";
+        : _currentUser.Name;
 
     public string SelectedMovieTitle => SelectedSession?.MovieTitle ?? "Выберите фильм";
     public string SelectedMovieOverview => SelectedSession?.Overview ?? "Описание появится после выбора фильма.";
@@ -133,6 +140,14 @@ public class MainViewModel : ObservableObject
 
         SelectedSession = Sessions.FirstOrDefault();
         LoadSeats();
+    }
+
+    public async Task SyncTmdbAsync()
+    {
+        SyncMessage = "Синхронизация с TMDB...";
+        var result = await _bookingService.SyncSessionsFromTmdbAsync();
+        SyncMessage = result.Message;
+        RefreshSessionsAndSeats();
     }
 
     public void BookSelectedSeat()

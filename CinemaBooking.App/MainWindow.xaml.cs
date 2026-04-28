@@ -1,5 +1,7 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using CinemaBooking.App.Models;
 using CinemaBooking.App.ViewModels;
 
 namespace CinemaBooking.App;
@@ -24,14 +26,23 @@ public partial class MainWindow : Window
         _vm.Register(RegisterPasswordBox.Password);
     }
 
-    private void Refresh_Click(object sender, RoutedEventArgs e)
+    private async void SyncTmdb_Click(object sender, RoutedEventArgs e)
     {
-        _vm.RefreshSessionsAndSeats();
+        await _vm.SyncTmdbAsync();
     }
 
     private void BookSeat_Click(object sender, RoutedEventArgs e)
     {
         _vm.BookSelectedSeat();
+    }
+
+    private void Seat_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: Seat seat })
+        {
+            _vm.SelectedSeat = seat;
+            _vm.BookingMessage = $"Выбрано место: ряд {seat.Row}, место {seat.Number}";
+        }
     }
 
     private void ToggleTheme_Click(object sender, RoutedEventArgs e)

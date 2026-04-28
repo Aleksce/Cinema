@@ -1,4 +1,6 @@
+using CinemaBooking.App.Config;
 using CinemaBooking.App.Data;
+using CinemaBooking.App.Integrations;
 using CinemaBooking.App.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,49 @@ public class BookingService
     {
         using var db = new CinemaDbContext();
         return db.Sessions.OrderBy(x => x.StartsAt).ToList();
+    }
+
+    public async Task<(bool Success, string Message)> SyncSessionsFromTmdbAsync()
+    {
+        var settings = SettingsLoader.Load();
+        var tmdbClient = new TmdbClient(settings.Tmdb);
+        var externalSessions = await tmdbClient.GetNowPlayingSessionsAsync();
+
+        if (externalSessions.Count == 0)
+        {
+            return (false, "TMDB не вернул фильмы. Проверьте ключ и интернет-соединение.");
+        }
+
+        using var db = new CinemaDbContext();
+
+        var oldBookings = db.Bookings.ToList();
+        db.Bookings.RemoveRange(oldBookings);
+
+        var oldSeats = db.Seats.ToList();
+        db.Seats.RemoveRange(oldSeats);
+
+        var oldSessions = db.Sessions.ToList();
+        db.Sessions.RemoveRange(oldSessions);
+
+        foreach (var session in externalSessions)
+        {
+            for (var row = 1; row <= 6; row++)
+            {
+                for (var seatNo = 1; seatNo <= 10; seatNo++)
+                {
+                    session.Seats.Add(new Seat
+                    {
+                        Row = row,
+                        Number = seatNo,
+                        IsBooked = false
+                    });
+                }
+            }
+        }
+
+        db.Sessions.AddRange(externalSessions);
+        await db.SaveChangesAsync();
+        return (true, $"Загружено {externalSessions.Count} фильмов из TMDB.");
     }
 
     public List<Seat> GetSeatsForSession(int sessionId)
